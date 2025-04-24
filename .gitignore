@@ -1,0 +1,21 @@
+# 機密情報（APIキーなど）
+config.js
+.env
+apikey.json
+
+# Macの隠しファイル
+.DS_Store
+
+# Node.js関連（使っていれば）
+node_modules/
+dist/
+build/
+
+# IDE系
+.vscode/
+.idea/
+
+# その他バックアップ・一時ファイル
+*.bak
+*.tmp
+*.log
