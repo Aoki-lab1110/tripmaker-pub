@@ -16,31 +16,49 @@ export function renderPlaceList(places) {
     }
     container.innerHTML = '';
     places.forEach((place, index) => {
-    const card = document.createElement("div");
-    card.className = `tm-place-card group-${place.category || 'default'}`;
-    card.innerHTML = `
-      <div class="tm-card-header">
-        <div class="tm-card-title">
-          ${place.title || '無題'}
-          <span class="tm-card-badge">${place.category || '未分類'}</span>
+  const item = document.createElement("div");
+  item.className = `place-item group-${place.category || 'default'}`;
+  item.innerHTML = `
+    <div class="place-top">
+      <div class="place-checkbox-container">
+        <input type="checkbox" class="place-checkbox" data-index="${index}">
+        <div class="place-title">
+          <span class="place-number">${index + 1}.</span> ${place.title || '無題'}
         </div>
       </div>
-      <div class="tm-card-body">
-        <div class="tm-card-meta">${place.date || ''} ${place.address || ''}</div>
-        <div class="tm-card-actions">
-          <input type="checkbox" class="place-checkbox" data-index="${index}">
-          <button class="tm-edit-btn" data-index="${index}">編集</button>
-        </div>
+      <div class="place-actions">
+        <i class="fas fa-pen place-action-icon" data-index="${index}"></i>
+        <i class="fas fa-trash place-action-icon" data-index="${index}"></i>
       </div>
-    `;
-    container.appendChild(card);
-  });
+    </div>
+    <div class="place-info">
+      <div class="place-address">
+        <i class="fas fa-map-marker-alt address-pin"></i>
+        <div class="address-text">${place.address || ''}</div>
+      </div>
+      <div class="place-meta">
+        <div class="meta-item primary">
+          <i class="fas fa-tag"></i>
+          <span>${place.category || '未分類'}</span>
+        </div>
+        ${place.date ? `<div class="meta-item time"><i class="far fa-clock"></i><span>${place.date}</span></div>` : ''}
+      </div>
+    </div>
+  `;
+  container.appendChild(item);
+});
 
-  // 編集ボタンのイベント
-  document.querySelectorAll('.tm-edit-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const idx = e.target.dataset.index;
-      alert(`編集: ${places[idx].title}`);
-    });
+// 編集・削除アイコンのイベント
+container.querySelectorAll('.fa-pen.place-action-icon').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const idx = e.target.dataset.index;
+    alert(`編集: ${places[idx].title}`);
   });
+});
+container.querySelectorAll('.fa-trash.place-action-icon').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const idx = e.target.dataset.index;
+    alert(`削除: ${places[idx].title}`);
+  });
+});
 }
