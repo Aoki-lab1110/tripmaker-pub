@@ -15,24 +15,32 @@ export function renderPlaceList(places) {
         return;
     }
     container.innerHTML = '';
-    places.forEach(place => {
-        const category = place.category || DEFAULT_CATEGORY;
-        const groupClass = `group-${category}`;
-        const card = document.createElement('div');
-        card.className = `tm-place-card ${groupClass}`;
-        card.innerHTML = `
-            <div class="tm-card-header">
-                <div class="tm-card-title">${place.title || ''}</div>
-                <div class="tm-card-badge">${category}</div>
-            </div>
-            <div class="tm-card-body">
-                <div class="tm-card-meta">${[place.date, place.address].filter(Boolean).join(' / ')}</div>
-                <div class="tm-card-actions">
-                    <input type="checkbox" class="place-checkbox" />
-                    <button class="tm-edit-btn">編集</button>
-                </div>
-            </div>
-        `;
-        container.appendChild(card);
+    places.forEach((place, index) => {
+    const card = document.createElement("div");
+    card.className = `tm-place-card group-${place.category || 'default'}`;
+    card.innerHTML = `
+      <div class="tm-card-header">
+        <div class="tm-card-title">
+          ${place.title || '無題'}
+          <span class="tm-card-badge">${place.category || '未分類'}</span>
+        </div>
+      </div>
+      <div class="tm-card-body">
+        <div class="tm-card-meta">${place.date || ''} ${place.address || ''}</div>
+        <div class="tm-card-actions">
+          <input type="checkbox" class="place-checkbox" data-index="${index}">
+          <button class="tm-edit-btn" data-index="${index}">編集</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  // 編集ボタンのイベント
+  document.querySelectorAll('.tm-edit-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = e.target.dataset.index;
+      alert(`編集: ${places[idx].title}`);
     });
+  });
 }

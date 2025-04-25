@@ -11,32 +11,33 @@ import { MAX_GOOGLE_MAPS_TRANSFER_PLACES, SEARCH_DEBOUNCE_DELAY } from '../confi
 
 // --- Setup Main Event Listeners ---
 
-// STEP 2.1: データ管理ボタンとファイル入力のイベントリスナー
 import { renderPlaceList } from './ui-render.js';
 
 document.addEventListener("DOMContentLoaded", () => {
   const dataBtn = document.getElementById("dataManagementSelector");
-  if (dataBtn) {
-    dataBtn.addEventListener("click", () => {
-      document.getElementById("dataFileInput")?.click();
+  const fileInput = document.getElementById("dataFileInput");
+
+  if (dataBtn && fileInput) {
+    dataBtn.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        try {
+          const json = JSON.parse(event.target.result);
+          renderPlaceList(json);
+        } catch (err) {
+          alert("JSONの読み込みに失敗しました");
+        }
+      };
+      reader.readAsText(file);
     });
   }
-
-  document.getElementById("dataFileInput")?.addEventListener("change", function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      try {
-        const places = JSON.parse(event.target.result);
-        renderPlaceList(places); // ui-render.js の描画関数を呼び出す
-      } catch (err) {
-        alert("JSONの読み込みに失敗しました");
-      }
-    };
-    reader.readAsText(file);
-  });
 });
+
 
 export function setupEventListeners() {
     console.log('Setting up event listeners...');
