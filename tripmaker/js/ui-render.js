@@ -16,13 +16,22 @@ export function renderPlaceList(places) {
     }
     container.innerHTML = '';
     places.forEach(place => {
+        const category = place.category || DEFAULT_CATEGORY;
+        const groupClass = `group-${category}`;
         const card = document.createElement('div');
-        card.className = 'tm-place-card mb-4';
+        card.className = `tm-place-card ${groupClass}`;
         card.innerHTML = `
-            <div class="tm-card-title text-lg font-bold mb-1">${place.title || ''}</div>
-            <span class="tm-card-badge inline-block bg-blue-100 text-blue-800 rounded px-2 py-0.5 text-xs mr-2">${place.category || DEFAULT_CATEGORY}</span>
-            <span class="text-xs text-gray-600">${place.date || ''}</span>
-            <div class="text-sm text-gray-700 mt-1">${place.address || ''}</div>
+            <div class="tm-card-header">
+                <div class="tm-card-title">${place.title || ''}</div>
+                <div class="tm-card-badge">${category}</div>
+            </div>
+            <div class="tm-card-body">
+                <div class="tm-card-meta">${[place.date, place.address].filter(Boolean).join(' / ')}</div>
+                <div class="tm-card-actions">
+                    <input type="checkbox" class="place-checkbox" />
+                    <button class="tm-edit-btn">編集</button>
+                </div>
+            </div>
         `;
         container.appendChild(card);
     });
