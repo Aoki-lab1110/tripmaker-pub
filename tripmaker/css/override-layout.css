@@ -1,0 +1,76 @@
+/* 横並び2カラム強制レイアウト用（PC用） */
+
+/* ヘッダー横並び・収まり強制 */
+.tm-header {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 64px !important;
+  padding: 0 16px !important;
+  gap: 16px !important;
+}
+.tm-header-title {
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.tm-header-search {
+  flex: 1 !important;
+  min-width: 200px !important;
+  max-width: 500px !important;
+}
+.tm-header-actions {
+  display: flex !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.tm-main-container {
+  display: flex !important;
+  flex-direction: row !important;
+  height: calc(100vh - 64px) !important;
+  min-height: 0 !important;
+}
+.tm-list-sidebar {
+  width: 340px !important;
+  min-width: 260px !important;
+  max-width: 400px !important;
+  background: #fff !important;
+  border-right: 1px solid #e5e7eb !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+.tm-map-container {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  background: #e0e7ef !important;
+  height: 100% !important;
+  position: relative !important;
+}
+.tm-map-area {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  background: #dbeafe !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 24px !important;
+  color: #666 !important;
+  font-weight: bold !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  width: 100% !important;
+}
+.tm-map-controls {
+  display: flex !important;
+  flex-shrink: 0 !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 10px 24px !important;
+  background: #f1f5f9 !important;
+  border-top: 1px solid #e5e7eb !important;
+  width: 100% !important;
+}

@@ -14,6 +14,35 @@ const Sortable = window.Sortable;
 
 // --- Main UI Rendering ---
 
+// STEP 5/6: 選択バーの動的制御
+function setupSelectionBarControl() {
+    function updateSelectionBar() {
+        const checkedCount = document.querySelectorAll('.place-checkbox:checked').length;
+        const selectionBar = document.querySelector('.tm-selection-bar');
+        const selectionCount = document.querySelector('.tm-selection-count');
+        if (!selectionBar || !selectionCount) return;
+        if (checkedCount > 0) {
+            selectionBar.style.display = 'flex';
+            selectionCount.textContent = `${checkedCount}件選択中`;
+        } else {
+            selectionBar.style.display = 'none';
+        }
+    }
+    // 初期化: 全てのチェックボックスにイベントリスナーを付与
+    function attachCheckboxEvents() {
+        document.querySelectorAll('.place-checkbox').forEach(cb => {
+            cb.removeEventListener('change', updateSelectionBar); // 重複防止
+            cb.addEventListener('change', updateSelectionBar);
+        });
+    }
+    // DOM更新後に呼び出す必要あり
+    attachCheckboxEvents();
+    updateSelectionBar();
+    // 外部から再アタッチできるよう返す
+    return { attachCheckboxEvents, updateSelectionBar };
+}
+
+
 /**
  * Renders the entire UI based on the current state.
  * @param {boolean} [calculateRoutesOnRender=false] - If true, trigger route calculation after rendering.
@@ -26,6 +55,13 @@ export function renderUI(calculateRoutesOnRender = false, fitMapOnRender = false
     }
     console.log("Rendering UI...", { calc: calculateRoutesOnRender, fit: fitMapOnRender });
     renderListGroupedByDate(); // Update the sortable list
+    if (window.tmSelectionBarControl) {
+        window.tmSelectionBarControl.attachCheckboxEvents();
+        window.tmSelectionBarControl.updateSelectionBar();
+    } else {
+        window.tmSelectionBarControl = setupSelectionBarControl();
+    }
+
     updateHeaderTripName();     // Update trip name in header
     renderCategoryFilterOptions(); // Update category filter dropdown
     applyCurrentFilters();      // Apply search/category filters to the list
@@ -53,6 +89,14 @@ export function renderUI(calculateRoutesOnRender = false, fitMapOnRender = false
 // --- List Rendering ---
 
 function renderListGroupedByDate() {
+    // リスト再描画時にもチェックボックスイベント再付与
+    setTimeout(() => {
+        if (window.tmSelectionBarControl) {
+            window.tmSelectionBarControl.attachCheckboxEvents();
+            window.tmSelectionBarControl.updateSelectionBar();
+        }
+    }, 0);
+
     // console.log("Rendering list grouped by date...");
     const listContainer = document.getElementById('sortable-list');
     if (!listContainer) return;

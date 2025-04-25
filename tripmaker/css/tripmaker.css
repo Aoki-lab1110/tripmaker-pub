@@ -1,11 +1,453 @@
 /* tripmaker/css/tripmaker.css */
-#map { height: calc(100vh - 110px); width: 100%; } /* ヘッダー高さ調整 */
-#list-container { height: calc(100vh - 110px); display: flex; flex-direction: column; } /* ヘッダー高さ調整 */
-#sortable-list { flex-grow: 1; overflow-y: auto; }
-.dragging { opacity: 0.5; background-color: #f0f0f0; }
-#editModal.hidden, #tripSettingsModal.hidden, #dataManagementMenu.hidden { display: none; } /* Hide modals/menus */
-.pac-container { z-index: 1050 !important; background-color: #fff; } /* Autocomplete候補の表示優先度 */
-.route-error { color: red; font-size: 0.8em; margin-left: 5px; }
+
+/* ====== 基本レイアウト ====== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+}
+.tm-body {
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f7fa;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ====== ヘッダー ====== */
+.tm-header {
+  background: #1e3a8a;
+  color: #fff;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+.tm-header-title {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 16px;
+}
+.tm-logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+.tm-trip-title {
+  color: #ffd700;
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255,255,255,0.3);
+}
+.tm-header-search {
+  flex-grow: 1;
+  margin: 0 24px;
+  max-width: 600px;
+}
+.tm-search-input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+}
+.tm-header-actions {
+  display: flex;
+  gap: 8px;
+}
+.tm-action-btn {
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+.tm-action-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+.tm-action-btn.primary {
+  background: #4f46e5;
+}
+.tm-action-btn.primary:hover {
+  background: #4338ca;
+}
+
+/* ====== 選択アクションバー ====== */
+.tm-selection-bar {
+  background: #3b82f6;
+  color: #fff;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+.tm-selection-actions {
+  display: flex;
+  gap: 12px;
+}
+.tm-selection-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+.tm-selection-btn:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+/* ====== メインレイアウト ====== */
+.tm-main-container {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.tm-list-sidebar {
+  width: 340px;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  min-width: 260px;
+  max-width: 400px;
+}
+.tm-list-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0 16px 0;
+}
+
+/* ====== フィルターバー ====== */
+.tm-filter-bar {
+  background: #f1f5f9;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 16px 8px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.tm-filter-inputs {
+  margin-bottom: 8px;
+}
+.tm-filter-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  background: #fff;
+}
+.tm-filter-actions {
+  display: flex;
+  gap: 8px;
+}
+.tm-filter-btn {
+  background: #e5e7eb;
+  color: #1e40af;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+.tm-filter-btn:hover {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+.tm-filter-btn-active, .tm-filter-btn.tm-filter-btn-active {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+}
+
+/* ====== 地図エリア ====== */
+.tm-map-container {
+  flex: 1;
+  background: #e0e7ef;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.tm-map-area {
+  flex: 1;
+  background: #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #666;
+  font-weight: bold;
+  border-bottom: 1px solid #e5e7eb;
+}
+.tm-map-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  background: #f1f5f9;
+  border-top: 1px solid #e5e7eb;
+}
+.tm-map-control-left, .tm-map-control-right {
+  display: flex;
+  gap: 8px;
+}
+.tm-map-control-btn {
+  background: #e0e7ef;
+  color: #1e40af;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+.tm-map-control-btn:hover {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+.tm-map-select {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  font-size: 13px;
+  background: #fff;
+  color: #1e40af;
+}
+
+/* ====== カード・リスト ====== */
+.tm-place-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin: 12px 16px;
+  padding: 16px 18px;
+  border-left: 5px solid #3b82f6;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+.tm-card-title {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #1e3a8a;
+}
+.tm-card-badge {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+/* ====== モーダル ====== */
+.tm-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(60, 60, 60, 0.45);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tm-modal-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+.tm-form-group {
+  margin-bottom: 18px;
+}
+
+/* ====== 汎用 ====== */
+.tm-tab-button {
+  background: #e5e7eb;
+  color: #1e40af;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+.tm-tab-button-active, .tm-tab-button.tm-tab-button-active {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+}
+
+/* ====== 既存/細部 ====== */
+.place-checkbox {
+  margin-right: 8px;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+
+
+.tm-body {
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f7fa;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
+
+.tm-main-container {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.tm-map-container {
+  flex: 1;
+  background: #e0e7ef;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+}
+
+.tm-map-area {
+  flex: 1;
+  background: #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #666;
+  font-weight: bold;
+  border-bottom: 1px solid #e5e7eb;
+  height: 100%;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+#list-container { 
+  display: flex; 
+  flex-direction: column; 
+  height: calc(100vh - 110px); 
+}
+
+#sortable-list { 
+  flex-grow: 1; 
+  overflow-y: auto; 
+}
+.dragging { 
+  opacity: 0.5; 
+  background-color: #f0f0f0; 
+}
+#editModal.hidden, #tripSettingsModal.hidden, #dataManagementMenu.hidden { 
+  display: none; 
+} /* Hide modals/menus */
+.pac-container { 
+  z-index: 1050 !important; 
+  background-color: #fff; 
+} /* Autocomplete候補の表示優先度 */
+.route-error { 
+  color: red; 
+  font-size: 0.8em; 
+  margin-left: 5px; 
+}
+.no-search-result { 
+  cursor: default !important; 
+}
+.custom-marker { 
+  background-color: #4285F4; 
+  color: white; 
+  border-radius: 50%; 
+  width: 24px; 
+  height: 24px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  font-size: 12px; 
+  font-weight: bold; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+  border: 1px solid white; 
+}
+.schedule-info, .route-details, .list-item-group { 
+  font-size: 0.75rem; 
+  margin-top: 2px; 
+  padding-left: 0; 
+  color: #4B5563; 
+} /* padding-left removed */
+.schedule-info.hidden { 
+  display: none; 
+}
+.list-item-date { 
+  font-size: 0.9em; 
+  font-weight: bold; 
+  color: #1E40AF; 
+  padding: 2px 5px; 
+  background-color: #DBEAFE; 
+  border-radius: 4px; 
+  margin-left: 5px; 
+}
+.copy-feedback { 
+  position: fixed; 
+  bottom: 20px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  background-color: rgba(0,0,0,0.7); 
+  color: white; 
+  padding: 8px 16px; 
+  border-radius: 5px; 
+  font-size: 14px; 
+  z-index: 1100; 
+  display: none; 
+}
+.copy-feedback.show { 
+  display: block; 
+  opacity: 1; 
+  transition: opacity 0.3s; 
+}
 .no-search-result { cursor: default !important; }
 .custom-marker { background-color: #4285F4; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 1px solid white; }
 .schedule-info, .route-details, .list-item-group { font-size: 0.75rem; margin-top: 2px; padding-left: 0; color: #4B5563; } /* padding-left removed */
@@ -13,8 +455,35 @@
 .list-item-date { font-size: 0.9em; font-weight: bold; color: #1E40AF; padding: 2px 5px; background-color: #DBEAFE; border-radius: 4px; margin-left: 5px; }
 .copy-feedback { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0,0,0,0.7); color: white; padding: 8px 16px; border-radius: 5px; font-size: 14px; z-index: 1100; display: none; }
 .copy-feedback.show { display: block; opacity: 1; transition: opacity 0.3s; }
-header { height: auto; /* 可変高さ */ flex-direction: column; align-items: flex-start; padding-bottom: 5px; }
-.header-row { display: flex; width: 100%; align-items: center; padding-bottom: 5px; flex-wrap: wrap; }
+.tm-header {
+  background: #1e3a8a;
+  color: #fff;
+  height: 64px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+.tm-header-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 16px;
+}
+.tm-header-search {
+  flex: 1 1 0;
+  min-width: 200px;
+  max-width: 500px;
+  margin: 0 24px;
+}
+.tm-header-actions {
+  display: flex;
+  gap: 8px;
+}
+.header-row { display: flex; width: 100%; align-items: center; padding-bottom: 5px; }
 .header-row:first-child { padding-bottom: 8px; }
 .date-group-header {
     background-color: #e0f2fe; /* Default background, overridden by weekday colors */
@@ -153,6 +622,14 @@ header { height: auto; /* 可変高さ */ flex-direction: column; align-items: f
     flex-grow: 1;
     border: none;
     outline: none;
+}
+
+/* ====== Google Mapsエリア調整 ====== */
+.tm-map-area {
+  flex: 1;
+  min-height: 0;
+}
+
     padding: 4px 0;
     background-color: transparent; /* Inherit container bg */
     min-width: 100px; /* Prevent collapsing */
