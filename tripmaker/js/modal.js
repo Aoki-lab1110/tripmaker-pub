@@ -248,6 +248,43 @@ export function setSettingsModal(opts) {
 // ===== 予定追加モーダル内容（modal.html完全コピー） =====
 export function setScheduleModal(opts) {
   document.getElementById('modal-title').textContent = '予定追加';
+  document.getElementById('modal-body').innerHTML = `
+    <form id="scheduleAddForm" novalidate>
+      <div class="form-group">
+        <label for="location-input" class="form-label required">住所または場所名</label>
+        <input type="text" id="location-input" name="placeAddress" placeholder="住所を入力" class="form-input" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="place-name" class="form-label required">場所名</label>
+        <input type="text" id="place-name" name="placeName" placeholder="場所名を入力" class="form-input" required autocomplete="off">
+      </div>
+      <!-- 他のフォーム項目がここに続く -->
+    </form>
+  `;
+
+  // 旧UIのオートコンプリート処理を正確に移植
+  const input = document.getElementById('location-input');
+  const nameField = document.getElementById('place-name');
+  if (input && window.google) {
+    const autocomplete = new window.google.maps.places.Autocomplete(input, {
+      fields: ['name', 'formatted_address', 'geometry'],
+      types: ['geocode'],
+    });
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      // place.name が存在しない場合のフォールバック処理（住所などから補完）
+      if (place) {
+        const fallbackName =
+          place.name ||
+          place.formatted_address ||
+          (place.address_components?.[0]?.long_name) ||
+          '';
+        nameField.value = fallbackName;
+      }
+    });
+  }
+
+  document.getElementById('modal-title').textContent = '予定追加';
 
   document.getElementById('modal-body').innerHTML = `
     <!-- 予定追加フォーム: 新UIもid="scheduleAddForm"で共通化 -->
