@@ -248,6 +248,7 @@ export function setSettingsModal(opts) {
 // ===== 予定追加モーダル内容（modal.html完全コピー） =====
 export function setScheduleModal(opts) {
   document.getElementById('modal-title').textContent = '予定追加';
+
   document.getElementById('modal-body').innerHTML = `
     <!-- 予定追加フォーム: 新UIもid="scheduleAddForm"で共通化 -->
     <form id="scheduleAddForm" novalidate>
@@ -345,6 +346,25 @@ export function setScheduleModal(opts) {
     if(typeof opts.onSave === 'function') opts.onSave();
     closeModal();
   };
+  
+  // [オートコンプリート移設] innerHTML設定後にオートコンプリートをバインド
+  // events.jsから移設：DoM挿入後に確実に存在するタイミングで実行
+  const placeAddressInput = document.getElementById('placeAddress');
+  const placeNameInput = document.getElementById('placeName');
+  
+  if (placeAddressInput && placeNameInput && window.google && window.google.maps && window.google.maps.places) {
+    const autocomplete = new window.google.maps.places.Autocomplete(placeAddressInput, { 
+      types: ['geocode'],
+      componentRestrictions: { country: 'jp' }
+    });
+    
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (place && place.name) {
+        placeNameInput.value = place.name;
+      }
+    });
+  }
   initializeTagInput();
   
   // Googleのオートコンプリート機能を初期化
