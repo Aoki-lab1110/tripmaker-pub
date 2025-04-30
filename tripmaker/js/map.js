@@ -7,8 +7,42 @@ import { isValidCoordinate, showError, showCopyFeedback, hashCode, getCategoryIc
 import { GOOGLE_MAPS_API_KEY, DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, GEOCODING_DELAY, GEOCODING_MAX_RETRIES, PREDEFINED_CATEGORIES, DEFAULT_CATEGORY, DEFAULT_TRANSPORT, STORAGE_KEY_MARKER_MODE } from '../config.js'; // STORAGE_KEY_MARKER_MODE を追加
 
 let mapInitialized = false;
+let map = null; // Google Map instance
 let autocompleteInstance = null; // For modal
 let headerAutocompleteInstance = null; // For header
+
+// --- ナイトモード用MapStyle ---
+const NIGHT_MODE_STYLE = [
+  { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+  { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#263c3f' }] },
+  { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{ color: '#6b9a76' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#38414e' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#212a37' }] },
+  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#9ca5b3' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#746855' }] },
+  { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#1f2835' }] },
+  { featureType: 'road.highway', elementType: 'labels.text.fill', stylers: [{ color: '#f3d19c' }] },
+  { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#2f3948' }] },
+  { featureType: 'transit.station', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#17263c' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#515c6d' }] },
+  { featureType: 'water', elementType: 'labels.text.stroke', stylers: [{ color: '#17263c' }] }
+];
+
+/**
+ * Google Mapのナイトモード切替
+ * @param {boolean} isNight trueでナイトモード、falseで通常
+ */
+export function setMapNightMode(isNight) {
+  if (map) {
+    map.setOptions({ styles: isNight ? NIGHT_MODE_STYLE : null });
+  }
+}
+window.setMapNightMode = setMapNightMode;
 
 
 // --- Initialization ---
@@ -78,7 +112,9 @@ export async function initializeMap() {
             streetViewControl: false,
             scaleControl: true,
         };
-        const mapInstance = new google.maps.Map(document.getElementById('map'), mapOptions);
+        const mapDiv = window.innerWidth <= 900 ? document.getElementById('mobile-map') : document.getElementById('map');
+        const mapInstance = new google.maps.Map(mapDiv, mapOptions);
+        map = mapInstance; // ← これを追加してグローバルmap変数に代入
         state.setMap(mapInstance); // Store map instance in state
 
         state.setDirectionsService(new google.maps.DirectionsService());

@@ -12,36 +12,38 @@ import { PREDEFINED_CATEGORIES, DEFAULT_CATEGORY, DEFAULT_TRANSPORT, CATEGORY_IC
 // If using npm, import Sortable from 'sortablejs';
 const Sortable = window.Sortable;
 
-// --- Main UI Rendering ---
-
-// STEP 5/6: 選択バーの動的制御
-function setupSelectionBarControl() {
-    function updateSelectionBar() {
-        const checkedCount = document.querySelectorAll('.place-checkbox:checked').length;
-        const selectionBar = document.querySelector('.tm-selection-bar');
-        const selectionCount = document.querySelector('.tm-selection-count');
-        if (!selectionBar || !selectionCount) return;
-        if (checkedCount > 0) {
-            selectionBar.style.display = 'flex';
-            selectionCount.textContent = `${checkedCount}件選択中`;
-        } else {
-            selectionBar.style.display = 'none';
-        }
+// --- モバイル用ビュー切り替え ---
+export function switchToMobileMapView() {
+    // タブ切り替え
+    document.getElementById('map-tab')?.classList.add('active');
+    document.getElementById('list-tab')?.classList.remove('active');
+    // ビュー切り替え
+    const mapView = document.getElementById('map-view');
+    const listView = document.getElementById('list-view');
+    if (mapView) mapView.style.display = 'block';
+    if (listView) listView.style.display = 'none';
+    // 地図初期化・リサイズ
+    if (window.google && window.google.maps) {
+        setTimeout(() => {
+            if (window.state && window.state.map) {
+                window.google.maps.event.trigger(window.state.map, 'resize');
+            }
+            // プレースホルダー非表示
+            const placeholder = document.getElementById('mobile-map-placeholder');
+            if (placeholder) placeholder.style.display = 'none';
+        }, 200);
     }
-    // 初期化: 全てのチェックボックスにイベントリスナーを付与
-    function attachCheckboxEvents() {
-        document.querySelectorAll('.place-checkbox').forEach(cb => {
-            cb.removeEventListener('change', updateSelectionBar); // 重複防止
-            cb.addEventListener('change', updateSelectionBar);
-        });
-    }
-    // DOM更新後に呼び出す必要あり
-    attachCheckboxEvents();
-    updateSelectionBar();
-    // 外部から再アタッチできるよう返す
-    return { attachCheckboxEvents, updateSelectionBar };
+}
+export function switchToMobileListView() {
+    document.getElementById('list-tab')?.classList.add('active');
+    document.getElementById('map-tab')?.classList.remove('active');
+    const mapView = document.getElementById('map-view');
+    const listView = document.getElementById('list-view');
+    if (listView) listView.style.display = 'block';
+    if (mapView) mapView.style.display = 'none';
 }
 
+// --- Main UI Rendering ---
 
 /**
  * Renders the entire UI based on the current state.
@@ -55,13 +57,6 @@ export function renderUI(calculateRoutesOnRender = false, fitMapOnRender = false
     }
     console.log("Rendering UI...", { calc: calculateRoutesOnRender, fit: fitMapOnRender });
     renderListGroupedByDate(); // Update the sortable list
-    if (window.tmSelectionBarControl) {
-        window.tmSelectionBarControl.attachCheckboxEvents();
-        window.tmSelectionBarControl.updateSelectionBar();
-    } else {
-        window.tmSelectionBarControl = setupSelectionBarControl();
-    }
-
     updateHeaderTripName();     // Update trip name in header
     renderCategoryFilterOptions(); // Update category filter dropdown
     applyCurrentFilters();      // Apply search/category filters to the list
@@ -89,14 +84,6 @@ export function renderUI(calculateRoutesOnRender = false, fitMapOnRender = false
 // --- List Rendering ---
 
 function renderListGroupedByDate() {
-    // リスト再描画時にもチェックボックスイベント再付与
-    setTimeout(() => {
-        if (window.tmSelectionBarControl) {
-            window.tmSelectionBarControl.attachCheckboxEvents();
-            window.tmSelectionBarControl.updateSelectionBar();
-        }
-    }, 0);
-
     // console.log("Rendering list grouped by date...");
     const listContainer = document.getElementById('sortable-list');
     if (!listContainer) return;
@@ -580,7 +567,7 @@ function updateDateGroupVisibility() {
 // --- Header Updates ---
 
 function updateHeaderTripName() {
-    const tripNameElement = document.getElementById('currentTripName');
+    const tripNameElement = document.getElementById('current-trip-name');
     if (tripNameElement) {
         const name = state.travelMetadata.tripName || '無題の旅行';
         tripNameElement.textContent = name;

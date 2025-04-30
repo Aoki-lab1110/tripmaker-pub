@@ -10,35 +10,6 @@ import { MAX_GOOGLE_MAPS_TRANSFER_PLACES, SEARCH_DEBOUNCE_DELAY } from '../confi
 
 
 // --- Setup Main Event Listeners ---
-
-import { renderPlaceList } from './ui-render.js';
-
-document.addEventListener("DOMContentLoaded", () => {
-  const dataBtn = document.getElementById("dataManagementSelector");
-  const fileInput = document.getElementById("dataFileInput");
-
-  if (dataBtn && fileInput) {
-    dataBtn.addEventListener("click", () => fileInput.click());
-
-    fileInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        try {
-          const json = JSON.parse(event.target.result);
-          renderPlaceList(json);
-        } catch (err) {
-          alert("JSONの読み込みに失敗しました");
-        }
-      };
-      reader.readAsText(file);
-    });
-  }
-});
-
-
 export function setupEventListeners() {
     console.log('Setting up event listeners...');
 
@@ -94,6 +65,20 @@ export function setupEventListeners() {
     setupEditModalListeners();
     setupTripSettingsModalListeners();
     setupNewModalEventListeners();
+
+    // --- モバイル用フッタータブ切り替え ---
+    const mapTab = document.getElementById('map-tab');
+    const listTab = document.getElementById('list-tab');
+    const mapView = document.getElementById('map-view');
+    const listView = document.getElementById('list-view');
+    if (mapTab && listTab) {
+        mapTab.addEventListener('click', () => {
+            ui.switchToMobileMapView();
+        });
+        listTab.addEventListener('click', () => {
+            ui.switchToMobileListView();
+        });
+    }
 
     console.log('Event listeners set up.');
 }
@@ -298,51 +283,58 @@ function handlePinDisplayChange(event) {
     }
 }
 
-// --- Data Management Listeners ---
+// --- Data Management Listeners (新UI: data-manage-btn対応) ---
 function setupDataManagementListeners() {
-    const selector = document.getElementById('dataManagementSelector');
-    const csvFileInput = document.getElementById('csvFileInput');
-    const jsonFileInput = document.getElementById('jsonFileInput');
-
-    // Add hidden file inputs if they don't exist
+    // 旧UIのセレクターではなく、ボタン＋メニューで実装
+    const btn = document.getElementById('data-manage-btn');
+    if (!btn) return;
+    // ファイルインプット（CSV/JSON）を必要に応じて生成
+    let csvFileInput = document.getElementById('csvFileInput');
+    let jsonFileInput = document.getElementById('jsonFileInput');
     if (!csvFileInput) {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.id = 'csvFileInput';
-        input.accept = '.csv';
-        input.style.display = 'none';
-        document.body.appendChild(input);
-        input.addEventListener('change', data.importDataFromCsv);
+        csvFileInput = document.createElement('input');
+        csvFileInput.type = 'file';
+        csvFileInput.id = 'csvFileInput';
+        csvFileInput.accept = '.csv';
+        csvFileInput.style.display = 'none';
+        document.body.appendChild(csvFileInput);
+        csvFileInput.addEventListener('change', data.importDataFromCsv);
     }
     if (!jsonFileInput) {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.id = 'jsonFileInput';
-        input.accept = '.json,.geojson';
-        input.style.display = 'none';
-        document.body.appendChild(input);
-        input.addEventListener('change', data.importDataFromJson); // Handles both JSON/GeoJSON
+        jsonFileInput = document.createElement('input');
+        jsonFileInput.type = 'file';
+        jsonFileInput.id = 'jsonFileInput';
+        jsonFileInput.accept = '.json,.geojson';
+        jsonFileInput.style.display = 'none';
+        document.body.appendChild(jsonFileInput);
+        jsonFileInput.addEventListener('change', data.importDataFromJson);
     }
-
-    // Handle selector change
-    selector?.addEventListener('change', (e) => {
-        const action = e.target.value;
-        switch (action) {
-            case 'importCsv':
-                document.getElementById('csvFileInput')?.click();
-                break;
-            case 'importJson': // Catches both .json and .geojson via accept attr
-                document.getElementById('jsonFileInput')?.click();
-                break;
-            case 'exportJson':
-                data.exportDataToJson();
-                break;
-            case 'exportGeoJson':
-                data.exportDataToGeoJson();
-                break;
-        }
-        // Reset selector to placeholder after action
-        e.target.selectedIndex = 0;
+    // シンプルなメニュー（window.confirm/alert/カスタムUIでもOK）
+    // 旧UIスタイルで素直にイベントリスナーを登録
+    // カスタムUIでメニュー表示
+    btn.addEventListener('click', function() {
+        if (btn.disabled) return;
+        import('./data_manage_menu.js').then(mod => {
+            mod.showDataManageMenu(action => {
+                switch (action) {
+                    case 'import-json':
+                        jsonFileInput.click();
+                        break;
+                    case 'import-csv':
+                        csvFileInput.click();
+                        break;
+                    case 'export-json':
+                        data.exportDataToJson();
+                        break;
+                    case 'export-geojson':
+                        data.exportDataToGeoJson();
+                        break;
+                    default:
+                        // キャンセルや何もしない
+                        break;
+                }
+            }, btn);
+        });
     });
 }
 

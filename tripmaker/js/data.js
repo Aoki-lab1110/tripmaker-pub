@@ -112,9 +112,6 @@ export function clearTripData() {
         console.log('No place data found in localStorage.');
     }
     state.setPlaceData(loadedPlaces); // Update state
-import('./ui-render.js').then(mod => {
-    mod.renderPlaceList(loadedPlaces);
-});
 
 
     const savedMeta = localStorage.getItem(STORAGE_KEY_METADATA);
@@ -272,9 +269,7 @@ export function importDataFromJson(event) {
             // --- Import Data ---
             state.setPlaceData(importedContainer.places); // Updates state with validation/defaults
             state.setTravelMetadata(importedContainer.metadata || { tripName: `インポート (${file.name})` }); // Update metadata
-            import('./ui-render.js').then(mod => {
-                mod.renderPlaceList(importedContainer.places);
-            });
+
             console.log(`Imported ${state.placeData.length} places and metadata from JSON (v${importedContainer.version}).`);
 
             savePlaceData();

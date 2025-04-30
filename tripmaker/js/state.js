@@ -12,7 +12,7 @@ export let travelMetadata = { // Metadata about the trip
     budget: '',
     notes: '',
     version: '1.0'
-};
+}; // ←初期値は無題＋空欄のみ
 
 // Map & Route State
 export let map = null; // Google Map instance
