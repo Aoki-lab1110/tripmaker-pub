@@ -1,0 +1,146 @@
+/* ===== ナイトモード用スタイル ===== */
+body.night-mode {
+  background-color: #1a1a1a !important;
+  color: #e0e0e0 !important;
+}
+body.night-mode .main-container,
+body.night-mode .list-sidebar,
+body.night-mode .map-container,
+body.night-mode .controls-container,
+body.night-mode .filter-bar,
+body.night-mode .search-bar {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+}
+body.night-mode .card,
+body.night-mode .popup,
+body.night-mode .map-popup {
+  background-color: #262626 !important;
+  color: #e0e0e0 !important;
+  border-color: #333333 !important;
+}
+body.night-mode .tab,
+body.night-mode .tab.active {
+  background: #222;
+  color: #e0e0e0;
+}
+body.night-mode .modal-overlay {
+  background-color: rgba(10, 15, 30, 0.88);
+}
+body.night-mode .modal-container {
+  background: #1e293b;
+  color: #e0e7ef;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.8);
+}
+body.night-mode .modal-title,
+body.night-mode .form-label,
+body.night-mode .option-label,
+body.night-mode .options-title {
+  color: #e0e7ef;
+}
+body.night-mode .form-input,
+body.night-mode .form-textarea,
+body.night-mode .category-select {
+  background: #334155;
+  color: #e0e7ef;
+  border-color: #475569;
+}
+body.night-mode .form-input::placeholder,
+body.night-mode .form-textarea::placeholder,
+body.night-mode .category-select::placeholder {
+  color: #94a3b8;
+}
+body.night-mode .modal-close {
+  background: #334155;
+  color: #e0e7ef;
+}
+body.night-mode .modal-close:hover {
+  background: #475569;
+  color: #fff;
+}
+body.night-mode .btn-cancel {
+  background: #334155 !important;
+  color: #e0e7ef !important;
+}
+body.night-mode .btn-cancel:hover {
+  background: #475569 !important;
+}
+body.night-mode .btn-save {
+  background: #2563eb !important;
+  color: #fff !important;
+}
+body.night-mode .btn-save:hover {
+  background: #1d4ed8 !important;
+}
+body.night-mode .btn-delete {
+  background: #7f1d1d;
+  color: #fff;
+  border-color: #ef4444;
+}
+body.night-mode .btn-delete:hover {
+  background: #b91c1c;
+}
+body.night-mode .modal-actions {
+  background: #223047 !important;
+  border-top: 1px solid #334155 !important;
+}
+body.night-mode .tag-input-container {
+  background-color: #334155;
+  border-color: #475569;
+}
+body.night-mode .tag-pill {
+  background-color: #334155;
+  color: #60a5fa;
+}
+body.night-mode .tag-remove {
+  color: #60a5fa;
+}
+body.night-mode .tag-remove:hover {
+  color: #38bdf8;
+}
+body.night-mode .tag-input-field {
+  color: #e0e7ef;
+}
+body.night-mode .tag-input-field::placeholder {
+  color: #94a3b8;
+}
+body.night-mode .date-time-title {
+  color: #e0e7ef !important;
+}
+body.night-mode .date-time-grid label,
+body.night-mode .date-time-grid .form-label {
+  color: #e0e7ef !important;
+}
+body.night-mode .date-time-grid input[type="date"],
+body.night-mode .date-time-grid input[type="time"] {
+  color: #e0e7ef !important;
+  background: #334155 !important;
+  border-color: #475569 !important;
+}
+body.night-mode .date-time-grid input[type="date"]::placeholder,
+body.night-mode .date-time-grid input[type="time"]::placeholder {
+  color: #94a3b8 !important;
+}
+body.night-mode .map-option.active {
+  background-color: #1e40af;
+  border-color: #60a5fa;
+  color: #e2e8f0;
+}
+body.night-mode .map-controls-toggle {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+body.night-mode .map-action-btn {
+  background-color: #1e293b;
+  color: #60a5fa;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+body.night-mode .map-all-routes-btn {
+  background-color: #047857;
+}
+body.night-mode .map-day-select {
+  background-color: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}

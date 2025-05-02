@@ -1,0 +1,1433 @@
+/* Tripmaker 統合スタイルシート */
+
+/* 基本スタイル */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Noto Sans JP', 'Roboto', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #333;
+    background-color: #f5f7fa;
+    font-weight: 400;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* ヘッダー */
+.app-header {
+    background-color: #1e3a8a;
+    color: white;
+    padding: 0 16px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+    transition: background-color 0.3s;
+}
+
+.app-title {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 18px;
+    margin-right: 16px;
+}
+
+.trip-title {
+    color: #ffd700;
+    margin-left: 12px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(255,255,255,0.3);
+}
+
+.search-container {
+    flex-grow: 1;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+    gap: 16px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 4px;
+    border: none;
+    font-size: 14px;
+}
+
+.main-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s, opacity 0.2s;
+    opacity: 1;
+    font-weight: 500;
+}
+
+.nightmode-btn {
+    padding: 8px 16px;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s, opacity 0.2s, color 0.2s;
+    opacity: 1;
+    font-weight: 500;
+}
+
+.nightmode-btn:hover {
+    background-color: rgba(255,255,255,0.2);
+    color: #ffd700;
+}
+
+.nightmode-btn:active {
+    background-color: rgba(255,255,255,0.15);
+}
+
+.action-btn[disabled] {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.action-btn:hover:not([disabled]) {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.action-btn.primary {
+    background-color: #4f46e5;
+}
+
+.action-btn.primary:hover:not([disabled]) {
+    background-color: #4338ca;
+}
+
+/* メインコンテナ */
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* リストサイドバー */
+.list-sidebar {
+    width: 40%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-right: 1px solid #e2e8f0;
+    overflow: hidden;
+    transition: background-color 0.3s;
+}
+
+/* フィルターバー */
+.filter-bar {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    transition: background-color 0.3s;
+}
+
+.filter-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-field {
+    flex-grow: 1;
+    position: relative;
+}
+
+.filter-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 14px;
+}
+
+.filter-input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+/* リストコンテナ */
+.list-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    transition: background-color 0.3s;
+}
+
+/* 空のリスト状態 */
+.empty-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 32px 16px;
+    color: #64748b;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #94a3b8;
+}
+
+.empty-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.empty-subtext {
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+/* 日付グループ */
+.date-group {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.date-group-header {
+    background-color: #f1f5f9;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    border-left: 4px solid #3b82f6;
+    transition: background-color 0.2s;
+}
+
+.date-group-header:hover {
+    background-color: #e2e8f0;
+}
+
+.day-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.day-title-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.day-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: #1e3a8a;
+}
+
+.day-count {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.day-number {
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.day-date {
+    color: #0f172a;
+}
+
+.day-date.sunday {
+    color: #dc2626;
+}
+
+.day-date.saturday {
+    color: #2563eb;
+}
+
+.day-toggle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: transform 0.2s;
+}
+
+.show-day-route-btn {
+    font-size: 12px;
+    padding: 4px 8px;
+    background-color: rgba(59,130,246,0.1);
+    color: #3b82f6;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.show-day-route-btn:hover {
+    background-color: rgba(59,130,246,0.2);
+}
+
+.show-day-route-btn.active-day-route {
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 500;
+}
+
+/* 折りたたみコンテンツ */
+.collapsible-content {
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.collapsible-content.collapsed {
+    max-height: 0 !important;
+}
+
+/* ソート可能グループ */
+.sortable-group {
+    padding: 8px 12px;
+    background-color: #fff;
+}
+
+/* 場所アイテム */
+.place-item {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background-color: #f8fafc;
+    border-radius: 6px;
+    border-left: 3px solid #cbd5e1;
+    transition: background-color 0.2s, transform 0.2s, border-color 0.2s;
+}
+
+.place-item:hover {
+    background-color: #f1f5f9;
+}
+
+.place-item.highlighted {
+    background-color: #dbeafe;
+    border-left-color: #3b82f6;
+}
+
+.place-item.dragging {
+    opacity: 0.7;
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 場所ヘッダー */
+.place-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.place-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+}
+
+.place-number {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.place-name {
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.place-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.place-edit-btn, .place-delete-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    border-radius: 4px;
+    color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.place-edit-btn:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+.place-delete-btn:hover {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+/* 場所詳細 */
+.place-time, .place-transport, .route-info, .place-address, .place-memo {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.place-memo {
+    white-space: pre-line;
+    line-height: 1.4;
+}
+
+/* 場所タグ */
+.place-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0;
+}
+
+.place-tag {
+    padding: 2px 8px;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* カテゴリアイコン */
+.category-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* カテゴリ色 */
+.category-観光 { color: #f97316; }
+.category-食事 { color: #16a34a; }
+.category-ホテル { color: #9333ea; }
+.category-移動 { color: #2563eb; }
+.category-買い物 { color: #db2777; }
+.category-イベント { color: #ca8a04; }
+.category-休憩 { color: #78716c; }
+.category-その他 { color: #64748b; }
+
+/* リストアイテム日付表示 */
+.list-item-date {
+    font-size: 12px;
+    padding: 2px 6px;
+    background-color: #e2e8f0;
+    color: #475569;
+    border-radius: 4px;
+    margin-left: auto;
+}
+
+.list-item-date.sunday {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.list-item-date.saturday {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+/* チェックボックス */
+.place-checkbox {
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+    cursor: pointer;
+    accent-color: #3b82f6;
+}
+
+/* 選択アクションバー */
+.selection-bar {
+    background-color: #3b82f6;
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+.selection-count {
+    font-size: 15px;
+}
+
+.selection-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.selection-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.selection-btn:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* 地図コンテナ */
+.map-container {
+    flex: 1;
+    background-color: #f8fafc;
+    position: relative;
+    overflow: hidden;
+}
+
+#map-container {
+    width: 100%;
+    height: 100vh; /* ビューポート全体を使う */
+    min-height: 500px;
+    background-color: #f0f0f0; /* 読み込み中の背景色 */
+    position: relative;
+}
+
+#map-container:empty::before {
+    content: '地図を読み込み中...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 24px;
+    text-align: center;
+    padding: 20px;
+}
+
+/* 地図コントロール */
+/* 地図コントロール - PC版 */
+.map-controls {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+.map-control-left {
+    display: flex;
+    gap: 8px;
+}
+
+.map-control-right {
+    display: flex;
+    gap: 8px;
+}
+
+.map-control-btn {
+    background-color: white;
+    color: #374151;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.map-control-btn:hover {
+    background-color: #f8fafc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.map-select {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 7px 12px;
+    font-size: 14px;
+    color: #1e293b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.map-control {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.map-control:hover {
+    background-color: #f8fafc;
+    color: #3b82f6;
+}
+
+.map-control.active {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #2563eb;
+}
+
+.map-control i {
+    font-size: 16px;
+}
+
+/* 地図操作ボタン */
+.map-action-btn {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    color: #3b82f6;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.map-action-btn:hover {
+    background-color: #f8fafc;
+    transform: scale(1.05);
+}
+
+.map-action-btn i {
+    font-size: 18px;
+}
+
+.map-recalc-btn {
+    bottom: 24px;
+    right: 16px;
+}
+
+.map-fit-btn {
+    bottom: 24px;
+    right: 64px;
+}
+
+.map-all-routes-btn {
+    bottom: 24px;
+    right: 112px;
+    width: auto;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #059669;
+    color: white;
+    border-color: #047857;
+}
+
+.map-all-routes-btn:hover {
+    background-color: #047857;
+}
+
+.map-all-routes-btn.active {
+    background-color: #0d9488;
+    border-color: #0f766e;
+}
+
+.map-all-routes-btn i {
+    margin-right: 6px;
+}
+
+/* 地図ポップアップ */
+.map-popup {
+    position: absolute;
+    top: 80px;
+    right: 16px;
+    width: 320px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.map-popup.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.popup-header {
+    position: relative;
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.popup-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.popup-date {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.popup-location {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.4;
+}
+
+.popup-section {
+    margin-bottom: 16px;
+}
+
+.popup-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.popup-route-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.popup-route-item {
+    background-color: #f1f5f9;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.popup-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.popup-action-btn {
+    padding: 8px 12px;
+    background-color: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.popup-action-btn:hover {
+    background-color: #e2e8f0;
+}
+
+.popup-action-btn.primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.popup-action-btn.primary:hover {
+    background-color: #2563eb;
+}
+
+.popup-header {
+    padding: 16px;
+    padding-bottom: 12px;
+    position: relative;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.popup-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.popup-close:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.popup-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 6px;
+    margin-right: 24px;
+}
+
+.popup-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.popup-body {
+    padding: 16px;
+}
+
+.popup-info {
+    margin-bottom: 20px;
+}
+
+.popup-field {
+    margin-bottom: 12px;
+}
+
+.popup-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.popup-value {
+    font-size: 14px;
+    color: #0f172a;
+    line-height: 1.4;
+}
+
+.popup-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.popup-tag {
+    padding: 2px 8px;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.popup-tag.empty {
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+.popup-address {
+    font-style: italic;
+}
+
+.popup-memo {
+    white-space: pre-line;
+}
+
+.popup-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.popup-action-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.popup-action-btn.secondary {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: none;
+}
+
+.popup-action-btn.secondary:hover {
+    background-color: #e2e8f0;
+}
+
+.popup-action-btn.primary {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.popup-action-btn.primary:hover {
+    background-color: #2563eb;
+}
+
+.popup-action-btn.danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: none;
+}
+
+.popup-action-btn.danger:hover {
+    background-color: #fecaca;
+}
+
+/* タブコンテナ（モバイル用） */
+.tabs {
+    display: none;
+    background-color: #fff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 100;
+}
+
+/* 設定ボタンとメニュー（モバイル用） */
+.settings-button {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 100;
+    cursor: pointer;
+}
+
+.settings-button i {
+    font-size: 20px;
+}
+
+.settings-menu {
+    display: none;
+    position: fixed;
+    bottom: 140px;
+    right: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    padding: 10px 0;
+    z-index: 99;
+    overflow: hidden;
+    width: 160px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background-color: #f3f4f6;
+}
+
+.menu-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    color: #4b5563;
+}
+
+/* 地図コントロールトグルボタン（モバイル用） */
+.map-controls-toggle {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #10b981;
+    color: white;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 100;
+    cursor: pointer;
+}
+
+.map-controls-toggle i {
+    font-size: 20px;
+}
+
+/* 地図コントロールパネル（モバイル用） */
+.map-controls-panel {
+    display: none;
+    position: fixed;
+    bottom: 70px;
+    left: 10px;
+    right: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    padding: 15px;
+    z-index: 90;
+}
+
+.map-option {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.map-option:last-child {
+    border-bottom: none;
+}
+
+.map-option:hover {
+    background-color: #f3f4f6;
+}
+
+.map-option i {
+    width: 24px;
+    color: #4b5563;
+}
+
+@media (max-width: 768px) {
+    /* レスポンシブ表示用の設定 */
+    .tabs {
+        display: flex;
+    }
+    
+    /* リストとマップの表示切り替え */
+    .mobile-content-active {
+        display: block;
+    }
+    
+    /* リスト表示時の設定ボタン表示 */
+    .mobile-content-active[data-content="list"] ~ .settings-button {
+        display: flex;
+    }
+    
+    /* 地図表示時のレンチマークボタン表示 */
+    .mobile-content-active[data-content="map"] ~ .map-controls-toggle {
+        display: flex;
+    }
+    
+    /* レンチマークボタン表示時のコントロールパネル */
+    .map-controls-toggle.active ~ .map-controls-panel {
+        display: block;
+    }
+}
+
+.tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    gap: 4px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.tab i {
+    font-size: 18px;
+}
+
+.tab.active {
+    color: #3b82f6;
+    background-color: #f8fafc;
+}
+
+/* モバイルコンテンツエリア */
+#mobile-content {
+    display: none;
+    flex: 1;
+    overflow: hidden;
+}
+
+.tab-content {
+    height: 100%;
+    overflow-y: auto;
+    display: none;
+}
+
+#list-view {
+    padding: 16px;
+    display: block;
+}
+
+#map-view {
+    position: relative;
+}
+
+/* モバイル用日付ヘッダー */
+.day-header {
+    margin-bottom: 12px;
+    background-color: #f1f5f9;
+    border-radius: 6px;
+    padding: 12px;
+    border-left: 4px solid #3b82f6;
+}
+
+/* モバイル用地図プレースホルダー */
+#mobile-map-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 18px;
+    text-align: center;
+    padding: 20px;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .main-container {
+        display: none;
+    }
+    
+    #mobile-content {
+        display: block;
+    }
+    
+    .app-header {
+        height: auto;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+    }
+    
+    .search-container {
+        max-width: none;
+        width: 100%;
+        order: 2;
+        margin-top: 8px;
+    }
+    
+    .main-actions {
+        display: none;
+    }
+    
+    .map-container {
+        width: 100%;
+    }
+    
+    .map-popup {
+        width: calc(100% - 32px);
+        top: auto;
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* モバイル用表示 */
+    .controls-container {
+        display: block;
+    }
+    
+    .tabs {
+        display: flex;
+    }
+    
+    .map-action-btn {
+        display: flex;
+    }
+    
+    .map-control-bar {
+        display: flex;
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        z-index: 10;
+        gap: 8px;
+    }
+    
+    /* デスクトップ用非表示 */
+    .list-sidebar {
+        display: none;
+    }
+    
+    .map-controls {
+        display: none;
+    }
+    
+    /* リスト表示とマップ表示の切り替え */
+    .content {
+        display: block;
+    }
+    
+    #list-view {
+        height: 100%;
+        overflow-y: auto;
+        padding-bottom: 70px; /* タブ高さ分の余白 */
+    }
+    
+    #map-view {
+        height: 100%;
+    }
+}
+
+/* コントロールコンテナ（モバイル用） */
+.controls-container {
+    padding: 10px;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: none;
+}
+
+/* 地図コントロールバー（モバイル用） */
+.map-control-bar {
+    display: none;
+    justify-content: space-between;
+    background-color: white;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.map-all-routes-btn {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.map-day-select {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 7px 12px;
+    font-size: 14px;
+    color: #1e293b;
+}
+
+@media (max-width: 768px) {
+    .controls-container {
+        display: block;
+    }
+}
+
+.search-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.search-bar {
+    flex-grow: 1;
+    background: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+}
+
+.search-bar i {
+    color: #64748b;
+    margin-right: 8px;
+}
+
+.search-input {
+    flex-grow: 1;
+    padding: 10px 0;
+    border: none;
+    font-size: 14px;
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+.settings-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+}
+
+/* モバイル設定メニュー */
+.settings-menu {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+    min-width: 200px;
+    display: none;
+}
+
+.settings-menu.visible {
+    display: block;
+}
+
+.settings-menu-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #0f172a;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.settings-menu-item:hover {
+    background-color: #f8fafc;
+}
+
+.settings-menu-item i {
+    width: 20px;
+    color: #64748b;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 480px) {
+    .app-title {
+        font-size: 16px;
+    }
+    
+    .popup-actions {
+        flex-direction: column;
+    }
+}

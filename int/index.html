@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google Fonts: Noto Sans JP（マテリアルデザイン推奨日本語フォント） -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:;base64,=">
+    <title>Tripmaker Lab β - 統合版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Sortable.js - ドラッグ&ドロップ機能 -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- スタイルシート -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/night_mode.css">
+    <script type="module">
+      import { GOOGLE_MAPS_API_KEY } from './config.js';
+
+      // グローバル状態管理オブジェクト
+      window._GMap = window._GMap || {
+        initialized: false,
+        loading: false
+      };
+
+      // マップ初期化関数
+      window.initMap = async () => {
+        if (window._GMap.initialized || window._GMap.loading) return;
+        window._GMap.loading = true;
+
+        try {
+          const { initMap } = await import('./js/map.js');
+          await initMap();
+          window._GMap.initialized = true;
+          console.log('Google Mapsが正常に初期化されました');
+        } catch (error) {
+          console.error('マップ初期化エラー:', error);
+        } finally {
+          window._GMap.loading = false;
+        }
+      };
+
+      // API読み込み関数
+      const loadGoogleMapsAPI = () => {
+        return new Promise((resolve) => {
+          if (window.google?.maps) return resolve();
+
+          const script = document.createElement('script');
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap&libraries=places,marker,routes,geometry&v=weekly`;
+          script.async = true;
+          script.defer = true;
+          script.onload = resolve;
+          script.onerror = () => console.error('Google Maps APIの読み込みに失敗しました');
+          document.head.appendChild(script);
+        });
+      };
+
+      // アプリケーション初期化
+      const initApp = async () => {
+        try {
+          console.log('Tripmaker アプリケーション初期化中...');
+          await loadGoogleMapsAPI();
+          console.log('Google Maps 初期化...');
+          
+          // UI初期化
+          const { renderUI } = await import('./js/ui.js');
+          renderUI();
+          console.log('UI初期化完了');
+        } catch (error) {
+          console.error('アプリケーション初期化エラー:', error);
+        }
+      };
+
+      // DOM準備完了後に初期化
+      if (document.readyState === 'complete') {
+        initApp();
+      } else {
+        window.addEventListener('DOMContentLoaded', initApp);
+      }
+    </script>
+</head>
+<body>
+    <!-- アプリヘッダー -->
+    <header class="app-header" id="tm-header">
+        <div class="app-title">
+            <span id="app-name" data-role="app-title">Tripmaker Lab β</span>
+            <span class="trip-title" id="current-trip-name" data-role="current-trip">ニュージーランド旅行</span>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" id="search-places-input" 
+                   data-role="place-search" placeholder="場所を検索してリストに追加...">
+            <button class="nightmode-btn" id="toggle-nightmode" 
+                    data-role="theme-switch" title="ナイトモード切替">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+        </div>
+        <div class="main-actions">
+            <button class="action-btn" id="add-schedule-btn" data-role="add-schedule" onclick="window.showScheduleModal && window.showScheduleModal()">
+                <i class="fas fa-plus"></i>
+                予定追加
+            </button>
+            <button class="action-btn" id="share-url-btn" data-role="share-url">
+                <i class="fas fa-share-alt"></i>
+                URL共有
+            </button>
+            <button class="action-btn" id="settings-btn" data-role="open-settings">
+                <i class="fas fa-cog"></i>
+                設定
+            </button>
+            <button class="action-btn primary" id="data-manage-btn" data-role="manage-data">
+                <i class="fas fa-database"></i>
+                データ管理
+            </button>
+        </div>
+    </header>
+
+    <!-- 選択アクションバー -->
+    <div class="selection-bar" id="selection-bar" data-role="selection-actions" style="display: none;">
+        <div class="selection-actions">
+            <button class="selection-btn" id="open-in-maps-btn" data-role="open-in-maps">
+                <i class="fas fa-external-link-alt"></i>
+                Google Mapsで開く
+            </button>
+            <button class="selection-btn" id="delete-selected-btn" data-role="delete-selected">
+                <i class="fas fa-trash-alt"></i>
+                選択した地点を削除
+            </button>
+            <button class="selection-btn" id="cancel-selection-btn" data-role="cancel-selection">
+                <i class="fas fa-times"></i>
+                選択解除
+            </button>
+        </div>
+    </div>
+
+    <!-- モバイル用コントロール -->
+    <div class="controls-container" id="mobile-controls">
+        <div class="search-row">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="mobile-search-input" class="search-input" placeholder="地点を検索...">
+            </div>
+            <button id="mobile-settings-btn" class="settings-btn">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+        <div class="action-row">
+            <button id="mobile-add-btn" class="action-btn primary" style="flex: 1;">
+                <i class="fas fa-plus"></i> 地点追加
+            </button>
+        </div>
+        
+        <!-- 設定メニュー（非表示） -->
+        <div class="settings-menu" id="settings-menu">
+            <div class="settings-menu-item" id="menu-settings">
+                <i class="fas fa-cog"></i> 旅行設定
+            </div>
+            <div class="settings-menu-item" id="menu-save">
+                <i class="fas fa-save"></i> データ保存
+            </div>
+            <div class="settings-menu-item" id="menu-export">
+                <i class="fas fa-file-export"></i> データ書出
+            </div>
+            <div class="settings-menu-item" id="menu-import">
+                <i class="fas fa-file-import"></i> データ読込
+            </div>
+            <div class="settings-menu-item" id="menu-darkmode">
+                <i class="fas fa-moon"></i> ダークモード
+            </div>
+        </div>
+    </div>
+
+    <!-- メイン表示エリア (デスクトップ用) -->
+    <div class="main-container" id="desktop-container">
+        <!-- リストサイドバー -->
+        <div class="list-sidebar" id="tm-list-sidebar">
+            <!-- フィルターバー（リスト内検索フォーム） -->
+            <div class="filter-bar" id="list-filter-bar">
+                <div class="filter-inputs">
+                    <div class="filter-field">
+                        <i class="fas fa-filter filter-icon"></i>
+                        <input type="text" id="filter-input" class="filter-input" data-role="list-filter" placeholder="フィルター（地点名・カテゴリ・タグなど）">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- リストコンテナ -->
+            <div class="list-container" id="tm-list-container" data-role="trip-day-list">
+                <!-- 並び替え可能なリスト -->
+                <div id="app" class="sortable-list" data-role="sortable-container">
+                    <!-- ここにJSで動的にリスト項目を追加 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 地図エリア -->
+        <div class="map-container" id="tm-map-container" data-role="map-area">
+            <!-- ここにGoogle Mapsが挿入されます -->
+            <div id="map" style="width:100%; height:100%; min-height:500px;"></div>
+            
+            <!-- 地図コントロール（PC用） -->
+            <div class="map-controls" id="desktop-map-controls">
+                <button class="map-control-btn" id="fit-all-routes-btn" data-role="desktop-show-all-routes">
+                    <i class="fas fa-route"></i>
+                    全ルート表示
+                </button>
+                
+                <div class="map-control-select">
+                    <label for="pin-display-selector">ピン表示:</label>
+                    <select id="pinDisplaySelector" class="map-control-input" data-role="pin-display">
+                        <option value="all">すべて表示</option>
+                        <option value="date">日付ごと</option>
+                        <option value="category">カテゴリ別</option>
+                    </select>
+                </div>
+                <div class="map-control-select">
+                    <label for="date-filter-selector">日付:</label>
+                    <select id="date-filter-selector" class="map-control-input" data-role="date-filter">
+                        <option value="all">すべての日付</option>
+                    </select>
+                </div>
+                <div class="map-control-right">
+                    <button class="map-control-btn" id="map-type-btn" data-role="map-type-toggle">
+                        <i class="fas fa-layer-group"></i>
+                        地図タイプ
+                    </button>
+                    <button class="map-control-btn" id="pin-toggle-btn" data-role="pin-toggle">
+                        <i class="fas fa-map-pin"></i>
+                        ピン表示
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 地図上部コントロールバー (モバイル用) -->
+            <div class="map-control-bar" id="mobile-map-control-bar">
+                <button class="map-all-routes-btn" id="mobile-all-routes-btn" data-role="mobile-show-all-routes">
+                    <i class="fas fa-route"></i>
+                    全ルート表示
+                </button>
+                <select class="map-day-select" id="mobile-day-select" data-role="mobile-day-filter">
+                    <option value="all">2025-05-12</option>
+                    <option value="day1">Day 1 (5/11)</option>
+                    <option value="day2">Day 2 (5/12)</option>
+                </select>
+            </div>
+            
+            <!-- 場所詳細ポップアップ -->
+            <div class="map-popup" id="map-popup" data-role="place-details">
+                <div class="popup-header">
+                    <div class="popup-close" id="popup-close-btn" data-role="close-popup">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <h3 class="popup-title" id="popup-title">2. オークランド・エアポート</h3>
+                    <div class="popup-meta">
+                        <div class="popup-date" id="popup-date" data-role="place-date">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>2025-05-12</span>
+                        </div>
+                        <div class="popup-location" id="popup-location" data-role="place-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>ニュージーランド 　2022 オークランド オークランド・エアポート</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-body">
+                    <div class="popup-section">
+                        <div class="popup-section-title">次の移動</div>
+                        <div class="popup-route-info" id="popup-route-info" data-role="route-info">
+                            <div class="popup-route-item" data-role="transport-mode">
+                                <i class="fas fa-plane"></i>
+                                <span>空路</span>
+                            </div>
+                            <div class="popup-route-item" data-role="route-distance">
+                                <i class="fas fa-route"></i>
+                                <span>746.8 km</span>
+                            </div>
+                            <div class="popup-route-item" data-role="route-duration">
+                                <i class="far fa-clock"></i>
+                                <span>約56分</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="popup-actions">
+                        <button class="popup-action-btn" id="edit-place-btn" data-role="edit-place">
+            </div>
+        </div>
+        
+        <!-- 地図上部コントロールバー (モバイル用) -->
+        <div class="map-control-bar" id="mobile-map-control-bar">
+            <button class="map-all-routes-btn" id="mobile-all-routes-btn" data-role="mobile-show-all-routes">
+                <i class="fas fa-route"></i>
+                全ルート表示
+            </button>
+            <select class="map-day-select" id="mobile-pin-display" data-role="pin-display">
+                <option value="all">すべて表示</option>
+                <option value="date">日付ごと</option>
+                <option value="category">カテゴリ別</option>
+            </select>
+            <select class="map-day-select" id="mobile-date-filter" data-role="date-filter">
+                <option value="all">すべての日付</option>
+            </select>
+            <div id="mobile-map-placeholder" data-role="mobile-map-mock">
+                地図を読み込み中...
+            </div>
+        </div>
+    </div>
+    
+    <!-- タブナビゲーション (モバイル用) -->
+    <div class="tabs" id="main-tabs">
+        <div class="tab active" id="list-tab" data-role="list-tab">
+            <i class="fas fa-list-ul tab-icon"></i>
+            <span>リスト</span>
+        </div>
+        <div class="tab" id="map-tab" data-role="map-tab">
+            <i class="fas fa-map tab-icon"></i>
+            <span>地図</span>
+        </div>
+    </div>
+    
+    <!-- 設定ボタンと設定メニュー（リスト表示時のみ） -->
+    <div class="settings-button" id="settings-button" data-role="settings-toggle">
+        <i class="fas fa-cog"></i>
+    </div>
+    
+    <div class="settings-menu" id="settings-menu" data-role="settings-menu">
+        <div class="menu-item" id="share-url-menu-item" data-role="share-url-action">
+            <div class="menu-item-icon"><i class="fas fa-share-alt"></i></div>
+            <span>URL共有</span>
+        </div>
+        <div class="menu-item" id="save-map-menu-item" data-role="save-map-action">
+            <div class="menu-item-icon"><i class="fas fa-download"></i></div>
+            <span>地図を保存</span>
+        </div>
+        <div class="menu-item" id="settings-menu-item" data-role="open-settings">
+            <div class="menu-item-icon"><i class="fas fa-cog"></i></div>
+            <span>設定</span>
+        </div>
+    </div>
+    
+    <!-- 地図コントロールトグルボタン（地図表示時のみ） -->
+    <div class="map-controls-toggle" id="map-controls-toggle" data-role="map-controls-toggle">
+        <i class="fas fa-wrench"></i>
+    </div>
+    
+    <!-- 地図コントロールパネル（地図表示時のみ） -->
+    <div class="map-controls-panel" id="map-controls-panel" data-role="map-controls-panel">
+        <div class="map-option" id="route-all-option" data-role="route-all-toggle">
+            <i class="fas fa-route"></i>
+            <span>全ルート表示</span>
+        </div>
+        <div class="map-option" id="route-day-option" data-role="route-day-toggle">
+            <i class="fas fa-calendar-alt"></i>
+            <span>日別ルート表示</span>
+        </div>
+        <div class="map-option" id="map-type-option" data-role="map-type-option">
+            <i class="fas fa-layer-group"></i>
+            <span>地図タイプ切替</span>
+        </div>
+    </div>
+
+</body>
+</html>
